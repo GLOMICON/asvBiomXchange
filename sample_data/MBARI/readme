@@ -18,7 +18,9 @@ and cols (sample metadata, i.e. date, locations, volumes, pipeline parameters, e
 
 The sample metadata definitions are still a work in progress as such the metadata tracked from each biom may be different.
 
-![Alt text](https://user-images.githubusercontent.com/1767453/60214849-31e2d900-981b-11e9-9c07-fce268f877c3.PNG)
+<p aligh="center">
+<img src="https://user-images.githubusercontent.com/1767453/60214849-31e2d900-981b-11e9-9c07-fce268f877c3.PNG" width="500">
+</p>
 
 Metabarcodes from Monterey Bay California
 1. 12S vertebrates
