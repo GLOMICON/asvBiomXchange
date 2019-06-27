@@ -18,7 +18,7 @@ If you have developed or want to develop a FASTQ to ASV processing flow and/or B
 
 You're then welcome to assist us in creating a common, central work flow for prototyping and Observatory to OBIS data flow.
 
-![Draft data flow](https://github.com/GLOMICON/asvBiomXchange/blob/master/images/ASV_data_flow_1.png)
+![Draft data flow](images/ASV_data_flow_1.png)
 
 # Contact
 
