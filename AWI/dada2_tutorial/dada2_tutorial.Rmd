@@ -53,9 +53,9 @@ path <- "~/dada2/dada2_data/MiSeq_SOP" # change this directory to where fastq fi
 list.files(path)
 ```
 
-Step 2 -String manipulation-
+step 2 -String manipulation-
 
-String manipulation to get matched lists of the forward and reverse fastq files. 
+String manipulation to get matched lists of the forward and reverse fastq files.. 
 ```{r}
 # The format of forward and reverse fastq file name is SAMPLENAME_R1_001.fastq and SAMPLENAME_R2_001.fastq
 fnFs <- sort(list.files(path, pattern="_R1_001.fastq", full.name = TRUE))
