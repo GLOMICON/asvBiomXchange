@@ -1,8 +1,8 @@
 Monterey Bay Aquarium Research Institute (MBARI)
 Francisco Chavez
 
-Biom files created from a modified version of the banzai pipeline, see https://github.com/reikopm/mbonlive_banzai
-This folder contains eDNA sample biom files for metabarcodes 12S, 16S, 18S, and COI. The biom format: biom-format.org
+MBARI Biom files are created from a modified version of the banzai pipeline, see https://github.com/reikopm/mbonlive_banzai
+This folder contains eDNA sample biom files for metabarcodes 12S, 16S, 18S, and COI. The biom format is from biom-format.org
 
 The Biological Observation Matrix (BIOM) 
 
@@ -13,14 +13,29 @@ The BIOM format is designed for general use in broad areas of comparative -omics
 primary use is to represent operational taxonomic unit (OTU) tables: the matrix contains counts corresponding to the number 
 of times each OTU is observed in each sample.
 
-The BIOM file is an ascii text file with three sections, data (sequence reads), rows (observation metadata, taxonomic assignments), 
-and cols (sample metadata, i.e. date, locations, volumes, pipeline parameters, etc)
+<p aligh="center">
+<img src="https://user-images.githubusercontent.com/1767453/60984701-04a12b00-a2f1-11e9-9cb1-e6378408acf9.png" width="500">
+</p>
+<p aligh="center">
+<img src="https://user-images.githubusercontent.com/1767453/60984438-9492a500-a2f0-11e9-8efe-c4c74bbe8fae.png" width="500">
+</p>
 
-The sample metadata definitions are still a work in progress as such the metadata tracked from each biom may be different.
+The BIOM file is an ascii text file with three sections, "data" (sequence reads), "rows" (observation metadata), 
+and "cols" (sample metadata).
+<p aligh="center">
+<img src="https://user-images.githubusercontent.com/1767453/60297367-db3dd380-98dc-11e9-9934-f24c3105b5f2.PNG" width="500">
+</p>
+
+1. Sequence reads: OTU table from pipeline processing, usearch swarm clustering.
+2. Observation metadata: MEGAN taxonomic assignments from NCBI blastn results. https://ab.inf.uni-tuebingen.de/software/megan6 
+3. Sample metadata: Collection, laboratory, and processing metadata. Metadata are manually assembled; data are modeled following GSC MiMarks.
 
 <p aligh="center">
 <img src="https://user-images.githubusercontent.com/1767453/60214849-31e2d900-981b-11e9-9c07-fce268f877c3.PNG" width="500">
 </p>
+
+The sample metadata definitions are still a work in progress as such the metadata tracked from each biom may be different (2019 July).
+<iframe src="https://github.com/reikopm/asvBiomXchange/raw/master/sample_data/MBARI/standard_metadata_KW_RPM_CJC.pdf&embedded=true" style="width:100%;height=100%;" frameborder="0"></iframe>
 
 Metabarcodes from Monterey Bay California
 1. 12S vertebrates
