@@ -35,7 +35,7 @@ and "cols" (sample metadata).
 </p>
 
 The sample metadata definitions are still a work in progress as such the metadata tracked from each biom may be different (2019 July).
-<iframe src="https://github.com/reikopm/asvBiomXchange/raw/master/sample_data/MBARI/standard_metadata_KW_RPM_CJC.pdf&embedded=true" style="width:100%;height=100%;" frameborder="0"></iframe>
+See asvBiomXchange/sample_data/MBARI/standard_metadata_KW_RPM_CJC.pdf for current metadata information.
 
 Metabarcodes from Monterey Bay California
 1. 12S vertebrates
