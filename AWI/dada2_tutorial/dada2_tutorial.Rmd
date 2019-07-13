@@ -6,23 +6,22 @@ output:
     df_print: paged
 ---
 
-DADA2 is a R package that implements the full amplicon workflow, including filtering, dereplication, chimer identification, and merging paired-end-reads, which introduces a model based approach for correcting amplicon errors without constructing OTUs.
+DADA2 is a R package that implements the full amplicon workflow, including filtering, dereplication, chimera identification, and merging paired-end-reads, which introduces a model based approach for correcting amplicon errors without constructing OTUs.
 
-In this Rstudio markdown (version 2.1), an overflow of the dada2 pipeline is explained.
+In this Rstudio markdown (version 2.1), a workflow of the dada2 pipeline is explained.
 The version of R used throughout this tutorial is 3.6.0.
-The version of other program tools is listed below.
-
-swarm  -- version 3
+The version of other program tools used is listed below.
+```
+dada2  -- version 1.12.1
 vsearch -- version 2.13.4
-
-
-THree criteria that data needs to meet before begin the workflow
+```
+Tree criteria that data needs to meet before begin the workflow
         1.Demultiplexed samples (splitting into individual per sample fastq files)
         2.Non-biological nucleotides have been removed such as primers, adapters
         3.If paired-end sequencing data, the forward and reverse fastq files contain reads in matched order.
         
         
-Initially, the necessary packages must be loded onto the console. 
+(Commented section is optional command)Initially, the necessary packages must be loded onto the console. 
 
 ```{r}
 # library("knitr")
@@ -41,8 +40,7 @@ Initially, the necessary packages must be loded onto the console.
 # # Load packages into session, and print package version
 # sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
 
-library("dada2")
-
+library(dada2)
 ```
 
 
@@ -53,9 +51,9 @@ path <- "~/dada2/dada2_data/MiSeq_SOP" # change this directory to where fastq fi
 list.files(path)
 ```
 
-step 2 -String manipulation-
+Step 2 -String manipulation-
 
-String manipulation to get matched lists of the forward and reverse fastq files.. 
+String manipulation to get matched lists of the forward and reverse fastq files. 
 ```{r}
 # The format of forward and reverse fastq file name is SAMPLENAME_R1_001.fastq and SAMPLENAME_R2_001.fastq
 fnFs <- sort(list.files(path, pattern="_R1_001.fastq", full.name = TRUE))
@@ -137,8 +135,8 @@ derepFs <- derepFastq(filtFs, verbose=TRUE)
 derepRs <- derepFastq(filtRs, verbose=TRUE)
 
 # Name the derep-class object by the sample names. 
-names(derepFs) <- sampleNames
-names(derepRs) <- sampleNames
+names(derepFs) <- sample.names
+names(derepRs) <- sample.names
 ```
 
 step 7 - learn the error rates 
@@ -223,39 +221,80 @@ rownames(taxa.print) <- NULL
 head(taxa.print)
 ```
 
-step 14 - evaluation of accuracy - 
+step 14 - evaluation of accuracy (optional step)-
 
-```{r}
-unqs.mock <- seqtab.nochim["Mock",]
-unqs.mock <- sort(unqs.mock[unqs.mock>0], decreasing=TRUE) # Drop ASVs absent in the Mock
-cat("DADA2 inferred", length(unqs.mock), "sample sequences present in the Mock community. \n")
-
-mock.ref <- getSequences(file.path(path, "HMP_MOCK.v35.fasta"))
-match.ref <- sum(sapply(names(unqs.mock), function(x) any(grepl(x, mock.ref))))
-cat("0f those,", sum(match.ref), "were exact matches to the expected reference sequences. \n")
+# ```{r}
+# unqs.mock <- seqtab.nochim["Mock",]
+# unqs.mock <- sort(unqs.mock[unqs.mock>0], decreasing=TRUE) # Drop ASVs absent in the Mock
+# cat("DADA2 inferred", length(unqs.mock), "sample sequences present in the Mock community. \n")
+#
+# mock.ref <- getSequences(file.path(path, "HMP_MOCK.v35.fasta"))
+# match.ref <- sum(sapply(names(unqs.mock), function(x) any(grepl(x, mock.ref))))
+# cat("0f those,", sum(match.ref), "were exact matches to the expected reference sequences. \n")
 ```
 
 
-STEP 15 - exporting the OTU table - 
+STEP 15 - exporting the OTU table - (IMPORTANT)
 
-This step is to demonstrate how to import the tables produced by the DADA2 pipeline into phyloseq.
+This step is to demonstrate how to export the tables produced by the DADA2 pipeline out to your local folder.
 
 ```{r}
-samples.out <- rownames(seqtab.nochim)
-subject <- sapply(strsplit(samples.out, "D"), `[`, 1)
-gender <- substr(subject,1,1)
-subject <- substr(subject,2,999)
-day <- as.integer(sapply(strsplit(samples.out, "D"), `[`, 2))
-samdf <- data.frame(Subject=subject, Gender=gender, Day=day)
-samdf$When <- "Early"
-samdf$When[samdf$Day>100] <- "Late"
-rownames(samdf) <- samples.out
+# Giving our seq headers more manageable names
+asv_seqs <- colnames(seqtab.nochim)
+asv_headers <- vector(dim(seqtab.nochim)[2], mode="character")
 
-ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE),
-               sample_data(samdf))
-               #tax_table(taxa))
-ps <- prune_samples(sample_names(ps) != "Mock", ps)
+for (i in 1:dim(seqtab.nochim)[2]) {
+  asv_headers[i] <- paste(">ASV", i, seq="_")
+}
+
+# making and writing out a fast of our final ASV seqs:
+asv_fasta <- c(rbind(asv_headers, asv_seqs))
+# File name can be changed by modifying "ASVs.fa"
+write(asv_fasta, "ASVs.fa") 
+
+
+# ASV table
+asv_tab <- t(seqtab.nochim)
+row.names(asv_tab) <- sub(">", "", asv_headers)
+# File name can be changed by modifying "ASVs_counts.tsv"
+write.table(asv_tab, "ASVs_counts.tsv", sep="\t", quote=F, col.names=NA)
+
+# tax table (This is commented out due to memory allocation failure on my laptop)
+<!-- asv_tax <- taxa -->
+<!-- row.names(asv_tax) <- sub(">", "", asv_headers) -->
+<!-- write.table(asv_tax, "ASVs_taxoomy.tsv", sep="\t", quote=F, col,names=NA) -->
+
+
 ```
+
+
+
+=========================================================================
+========================================================================
+========================================================================
+              Steps below this point are optional!!
+=======================================================================
+======================================================================
+=======================================================================
+
+
+# ```{r}
+# samples.out <- rownames(seqtab.nochim)
+# subject <- sapply(strsplit(samples.out, "D"), `[`, 1)
+# gender <- substr(subject,1,1)
+# subject <- substr(subject,2,999)
+# day <- as.integer(sapply(strsplit(samples.out, "D"), `[`, 2))
+# samdf <- data.frame(Subject=subject, Gender=gender, Day=day)
+# samdf$When <- "Early"
+# samdf$When[samdf$Day>100] <- "Late"
+# rownames(samdf) <- samples.out
+# 
+# ps <- phyloseq(otu_table(seqtab.nochim, taxa_are_rows=FALSE),
+#                sample_data(samdf))
+#                #tax_table(taxa))
+# ps <- prune_samples(sample_names(ps) != "Mock", ps)
+```
+
 
 ```{r}
 dna <- Biostrings::DNAStringSet(taxa_names(ps))
