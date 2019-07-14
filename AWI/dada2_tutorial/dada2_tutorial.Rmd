@@ -13,7 +13,7 @@ The version of R used throughout this tutorial is 3.6.0.
 The version of other program tools used is listed below.
 ```
 dada2  -- version 1.12.1
-vsearch -- version 2.13.4
+phyloseq -- version 1.28.0
 ```
 Tree criteria that data needs to meet before begin the workflow
         1.Demultiplexed samples (splitting into individual per sample fastq files)
@@ -41,6 +41,7 @@ Tree criteria that data needs to meet before begin the workflow
 # sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
 
 library(dada2)
+library(phyloseq)
 ```
 
 
@@ -155,8 +156,8 @@ plotErrors(errF, nominalQ=TRUE)
 step 8 - Sample inference
 This dada function removes all sequencing errors to reveal the members of the sequenced community. 
 ```{r}
-dadaFs <- dada(filtFs, err=errF, multithread=TRUE)
-dadaRs <- dada(filtRs, err=errR, multithread=TRUE)
+dadaFs <- dada(filtFs, err=errF, multithread=TRUE, pool="pseudo")
+dadaRs <- dada(filtRs, err=errR, multithread=TRUE, pool="pseudo")
 dadaFs[[1]]
 ```
 
@@ -223,7 +224,7 @@ head(taxa.print)
 
 step 14 - evaluation of accuracy (optional step)-
 
-# ```{r}
+ ```{r}
 # unqs.mock <- seqtab.nochim["Mock",]
 # unqs.mock <- sort(unqs.mock[unqs.mock>0], decreasing=TRUE) # Drop ASVs absent in the Mock
 # cat("DADA2 inferred", length(unqs.mock), "sample sequences present in the Mock community. \n")
@@ -250,20 +251,19 @@ for (i in 1:dim(seqtab.nochim)[2]) {
 # making and writing out a fast of our final ASV seqs:
 asv_fasta <- c(rbind(asv_headers, asv_seqs))
 # File name can be changed by modifying "ASVs.fa"
-write(asv_fasta, "ASVs.fa") 
+write(asv_fasta, "ASVs_example.fa") 
 
 
 # ASV table
 asv_tab <- t(seqtab.nochim)
 row.names(asv_tab) <- sub(">", "", asv_headers)
 # File name can be changed by modifying "ASVs_counts.tsv"
-write.table(asv_tab, "ASVs_counts.tsv", sep="\t", quote=F, col.names=NA)
+write.table(asv_tab, "ASVs_example.tsv", sep="\t", quote=F, col.names=NA)
 
 # tax table (This is commented out due to memory allocation failure on my laptop)
-<!-- asv_tax <- taxa -->
-<!-- row.names(asv_tax) <- sub(">", "", asv_headers) -->
-<!-- write.table(asv_tax, "ASVs_taxoomy.tsv", sep="\t", quote=F, col,names=NA) -->
-
+# asv_tax <- taxa
+# row.names(asv_tax) <- sub(">", "", asv_headers)
+# write.table(asv_tax, "ASVs_taxoomy.tsv", sep="\t", quote=F, col,names=NA)
 
 ```
 
