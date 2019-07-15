@@ -58,4 +58,62 @@ NOTE: If you get a error message "ValueError: column index exceeds matrix dimens
 
 NOTE 2: If you have trouble creating JSON biom format file displaying an error message "biom.exception.TableException: Unsupported matrix data type.", please refer to the issue posted in the repository of the developer (https://github.com/biocore/biom-format/issues/816)
 
+--Adding sample metadata and observation (taxnomy) data table to biom files. BIOM package contains 'add-metadata' option to add sample metadata and taxnomy table (observation data) to the biom file. 
+
+Sample and obervation metadata should look like this. (mouse.dpw.metadata and )
+```{r, engine='bash'}
+# sample metadata
+cat $HOME/asvBiomXchange/AWI/dada2_tutorial/mouse.dpw.metadata
+
+#SampleID	dpw
+F3D0	0
+F3D1	1
+F3D141	141
+F3D142	142
+F3D143	143
+F3D144	144
+F3D145	145
+F3D146	146
+F3D147	147
+F3D148	148
+F3D149	149
+F3D150	150
+F3D2	2
+F3D3	3
+F3D5	5
+F3D6	6
+F3D7	7
+F3D8	8
+F3D9	9
+
+# Observation metadata 
+cat $HOME/asvBiomXchange/AWI/dada2_tutorial/ASVs_taxonomy.tsv
+
+	Kingdom	Phylum	Class	Order	Family	Genus
+ASV 1 _	Bacteria	Bacteroidetes	Bacteroidia	Bacteroidales	MuribaculaceaeNA
+ASV 2 _	Bacteria	Bacteroidetes	Bacteroidia	Bacteroidales	MuribaculaceaeNA
+ASV 3 _	Bacteria	Bacteroidetes	Bacteroidia	Bacteroidales	MuribaculaceaeNA
+.
+..
+...
+
+```
+
+
+Here is the command for adding these two files in one biom file. 
+
+```{r, engine='bash'}
+OBSERVATION=$HOME/asvBiomXchange/AWI/dada2_tutorial/ASVs_taxonomy.tsv
+SAMPLE=$HOME/asvBiomXchange/AWI/dada2_tutorial/mouse.dpw.metadata
+
+# add both observation and sample metadata
+# add --output-as-json at the end of command if neccesary. 
+biom add-metadata -i ASVs_example_hdf5.biom -o ASVs_example_hdf5_w_md.biom --observation-metadata-fp $OBSERVATION --sample-metadata-fp $SAMPLEz
+
+```
+
+Output file "ASVs_example_hdf5_w_md.biom" can be found in the same directory of this repository.
+
+Further information can be found here
+http://biom-format.org
 
