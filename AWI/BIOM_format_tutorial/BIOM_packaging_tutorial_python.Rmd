@@ -53,6 +53,10 @@ biom convert -i $ASVTABLE -o ASVs_example_hdf5.biom --table-type="OTU table" --t
 
 biom convert -i $ASVTABLE -o ASVs_example_json.biom --table-type="OTU table" --to-json
 
+# Converting back to tsv table format
+
+biom convert -i ASVs_example_json.biom -o table.from_biom.txt --to-tsv
+
 ```
 NOTE: If you get a error message "ValueError: column index exceeds matrix dimensions", try adding "TAXA" on top left column(first one) as header. (http://www.metagenomics.wiki/tools/16s/qiime/otu-biom-table/valueerror-column-index-exceeds-matrix-dimensions)
 
