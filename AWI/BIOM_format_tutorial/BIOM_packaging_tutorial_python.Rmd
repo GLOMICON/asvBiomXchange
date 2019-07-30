@@ -118,6 +118,16 @@ biom add-metadata -i ASVs_example_hdf5.biom -o ASVs_example_hdf5_w_md.biom --obs
 
 Output file "ASVs_example_hdf5_w_md.biom" can be found in the same directory of this repository.
 
+-- Exporting BIOM file in the directory. 
+```{r, engine='bash'}
+# exporting OTUs/ASVs table
+biom convert -i ASVs_example_json.biom -o table.from_biom.txt --to-tsv
+
+# exporting a contingency table including taxonomy in the last column. 
+biom convert -i ASVs_example_json_w_md.biom -o ASVs.txt --to-tsv --header-key 'taxonomy' --tsv-metadata-formatter naive # Change taxonomy to the header name of observation data. 
+```
+
+
 Further information can be found here
 http://biom-format.org
 
