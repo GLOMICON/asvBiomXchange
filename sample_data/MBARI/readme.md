@@ -1,6 +1,8 @@
 Monterey Bay Aquarium Research Institute (MBARI)
 Francisco Chavez
 
+In this folder are full biom files from MBARI projects. Be aware that these biom files are very large, 5MB to 1GB unzipped. Smaller examples with a limited number of OTUs but with a full set of sample metadata may be found in the folder asvBiomXchange/sample_data/MBARI/Example_biom_files
+
 MBARI Biom files are created from a modified version of the banzai pipeline, see https://github.com/reikopm/mbonlive_banzai
 This folder contains eDNA sample biom files for metabarcodes 12S, 16S, 18S, and COI. The biom format is from biom-format.org
 
