@@ -85,7 +85,7 @@ F3D6	6
 F3D7	7
 F3D8	8
 F3D9	9
-
+Mock  NA
 # Observation metadata 
 cat $HOME/asvBiomXchange/AWI/dada2_tutorial/ASVs_taxonomy.tsv
 
