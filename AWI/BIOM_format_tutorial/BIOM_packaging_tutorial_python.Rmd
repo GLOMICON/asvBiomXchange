@@ -1,0 +1,133 @@
+---
+title: "Biom_packaging_tutorial_pythonVer"
+output: html_notebook
+Written by: Matomo Niwano
+---
+
+-BIOM file format-
+
+BIOM format file is an essential file format for the researchers to analyze observation contingency tables generated from biological samples. One example of the observation contigency tables is OTU (operational taxonomic unit), which represents clustered 16s RNA gene amplicon sequence reads with 97% or higher similiarity.
+
+Initially, BIOM format was created to handle large sets of biological data, to include multiple data tables in a single file, and to facilliate the data movement between programs that support this format. 
+
+2 representations can be seen within an OTU table. 
+  -Dense representation
+          -unobserved OTUs are indicated in zero
+  -Sparse representation
+          -unobserved OTUs are not indicated in zero and unlisted in the table. 
+Usually, BIOM files use the extention as .biom
+
+In this tutorial, A data set from DADA2 tutorial in the same repository is used to package and generate a BIOM format file.  (https://github.com/matomoniwano/asvBiomXchange/tree/master/AWI/dada2_tutorial) 
+
+-Installing the biom-format python package-
+  First, biom-format package needs to be installed on the computer.
+  
+```{r, engine='bash'}
+pip install numpy
+pip install biom-format
+
+# If there is a trouble installing biom-format, try this command
+
+pip install git+git://github.com/biocore/biom-format.git@efa20e1d3104aada0383b35dbe976de17717e61c
+
+# To work with BIOM 2.0+ files:
+pip install h5py
+
+# To see a list of all biom commands
+biom
+
+# To enable Bash tab completion of biom commands, add the following line to $HOME/.bashrc
+eval "$(_BIOM_COMPLETE=source biom)"
+```
+Biom version 2.1.5-dev has been successfully installed on the computer!!. 
+
+-Converting between biom and tab-delimited table formats.-
+Biom package allows users to easily convert data files into biom format in just one command line. 
+
+```{r, engine='bash'}
+# Specifying the file path
+ASVTABLE=$HOME/asvBiomXchange/AWI/dada2_tutorial/ASVs_example.tsv
+# convert a tab-delimited table (e.g. .txt or .tsv extention) to a HDF5 or JSON biom format. 
+
+biom convert -i $ASVTABLE -o ASVs_example_hdf5.biom --table-type="OTU table" --to-hdf5s
+
+biom convert -i $ASVTABLE -o ASVs_example_json.biom --table-type="OTU table" --to-json
+
+# Converting back to tsv table format
+
+biom convert -i ASVs_example_json.biom -o table.from_biom.txt --to-tsv
+
+```
+NOTE: If you get a error message "ValueError: column index exceeds matrix dimensions", try adding "TAXA" on top left column(first one) as header. (http://www.metagenomics.wiki/tools/16s/qiime/otu-biom-table/valueerror-column-index-exceeds-matrix-dimensions)
+
+NOTE 2: If you have trouble creating JSON biom format file displaying an error message "biom.exception.TableException: Unsupported matrix data type.", please refer to the issue posted in the repository of the developer (https://github.com/biocore/biom-format/issues/816)
+
+--Adding sample metadata and observation (taxnomy) data table to biom files. BIOM package contains 'add-metadata' option to add sample metadata and taxnomy table (observation data) to the biom file. 
+
+Sample and obervation metadata should look like this. (mouse.dpw.metadata and )
+```{r, engine='bash'}
+# sample metadata
+cat $HOME/asvBiomXchange/AWI/dada2_tutorial/mouse.dpw.metadata
+
+#SampleID	dpw
+F3D0	0
+F3D1	1
+F3D141	141
+F3D142	142
+F3D143	143
+F3D144	144
+F3D145	145
+F3D146	146
+F3D147	147
+F3D148	148
+F3D149	149
+F3D150	150
+F3D2	2
+F3D3	3
+F3D5	5
+F3D6	6
+F3D7	7
+F3D8	8
+F3D9	9
+Mock  NA
+# Observation metadata 
+cat $HOME/asvBiomXchange/AWI/dada2_tutorial/ASVs_taxonomy.tsv
+
+	Kingdom	Phylum	Class	Order	Family	Genus
+ASV 1 _	Bacteria	Bacteroidetes	Bacteroidia	Bacteroidales	MuribaculaceaeNA
+ASV 2 _	Bacteria	Bacteroidetes	Bacteroidia	Bacteroidales	MuribaculaceaeNA
+ASV 3 _	Bacteria	Bacteroidetes	Bacteroidia	Bacteroidales	MuribaculaceaeNA
+.
+..
+...
+
+```
+
+
+Here is the command for adding these two files in one biom file. 
+
+```{r, engine='bash'}
+OBSERVATION=$HOME/asvBiomXchange/AWI/dada2_tutorial/ASVs_taxonomy.tsv
+SAMPLE=$HOME/asvBiomXchange/AWI/dada2_tutorial/mouse.dpw.metadata
+
+# add both observation and sample metadata
+# add --output-as-json at the end of command if neccesary. 
+biom add-metadata -i ASVs_example_hdf5.biom -o ASVs_example_hdf5_w_md.biom --observation-metadata-fp $OBSERVATION --sample-metadata-fp $SAMPLEz
+
+```
+
+Output file "ASVs_example_hdf5_w_md.biom" can be found in the same directory of this repository.
+
+-- Exporting BIOM file in the directory. 
+```{r, engine='bash'}
+# exporting OTUs/ASVs table
+biom convert -i ASVs_example_json.biom -o table.from_biom.txt --to-tsv
+
+# exporting a contingency table including taxonomy in the last column. 
+biom convert -i ASVs_example_json_w_md.biom -o ASVs.txt --to-tsv --header-key 'taxonomy' --tsv-metadata-formatter naive # Change taxonomy to the header name of observation data. 
+```
+
+
+Further information can be found here
+http://biom-format.org
+
